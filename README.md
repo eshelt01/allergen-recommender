@@ -20,7 +20,7 @@ A hybrid recommender providing individualized restaurant recommendations for tho
 
 ### Recommender
 - hybrid_recommend.py: module for recommender functions
-- AllergenRecommender.py & AllergenRecommender.ipynb: script/notebook for final recommender
+- AllergenRecommender.py : main script for final recommender
 
  ## Example Case:
 
