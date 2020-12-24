@@ -35,27 +35,16 @@ given_restaurant_name_2 = 'Pizzeria Libretto'
 given_allergen_key_list = ['peanut']
 given_dietary_key_list = ['vegetarian']
 
+#User input -> two restaurants that they already enjoy
+restaurant_names = ['STACK','Pizzeria Libretto']
+
+#User input -> allergies and dietary accomodations
+given_allergen_key_list = ['peanut']
+given_dietary_key_list = ['vegetarian']
+
 # Content-based neighbours from given restaurants
-given_restaurant_id1 = restaurant_name_df[restaurant_name_df['name']==given_restaurant_name_1].index[0]
-given_restaurant_id2 = restaurant_name_df[restaurant_name_df['name']==given_restaurant_name_2].index[0]
 
-content_neighbours_1 = rec.get_restaurant_neighbours(given_restaurant_id1, restaurant_keywords_df, restaurant_categories_df, restaurant_name_df, K = 50)
-content_neighbours_2 = rec.get_restaurant_neighbours(given_restaurant_id2, restaurant_keywords_df, restaurant_categories_df, restaurant_name_df, K = 50)
+neighbours = rec.recommend(restaurant_names, given_allergen_key_list, given_dietary_key_list, restaurant_name_df, restaurant_keywords_df, restaurant_categories_df, user_item_df, df_contains,df_free_from, df_dietary)
 
-# Based off of user's input restaurants, create mock user to compare to existing users
-mock_user = pd.DataFrame(0.0, columns=user_item_df.columns, index = ['mock_user'])
-mock_user[[given_restaurant_id1,given_restaurant_id2]] = 5.0
-
-# Neighbours to mock user from user-item filtering
-neighbours_to_mock_user = rec.get_neighbour_user_ids(mock_user, user_item_df, K = 10)
-user_neighbours = rec.get_restaurant_ids_from_neighbour_users(mock_user, neighbours_to_mock_user, user_item_df = user_item_df)
-
-#Combine all neighbours and remove duplicates and close name matches (for chain restaurants)
-combined_neighbours = rec.scale_neighbour_distance(content_neighbours_1) + rec.scale_neighbour_distance(content_neighbours_2) + rec.scale_neighbour_distance(user_neighbours,to_add = 0.05)
-combined_neighbours = rec.remove_dupe_neighbours(combined_neighbours,restaurant_name_df)
-
-# Re-rank neighbours based off of user's input allergies and dietary accomodation requests
-allergy_adjusted_neighbours = rec.re_rank_neighbours(combined_neighbours, df_contains,df_free_from, df_dietary, given_allergen_key_list, given_dietary_key_list)
-
-# Print top 10 recommendations
-rec.print_recommendations(allergy_adjusted_neighbours[:10],restaurant_name_df)
+# Print top 20 recommendations
+rec.print_recommendations(neighbours[:20],restaurant_name_df)

@@ -195,3 +195,29 @@ def scale_neighbour_distance(neighbour_tuple, to_add = 0):
     scaled_neighbours.sort(key = operator.itemgetter(1))
     
     return scaled_neighbours
+
+def recommend(restaurant_names, allergen_key_list, dietary_key_list, restaurant_name_df, restaurant_keywords_df, restaurant_categories_df, user_item_df, df_contains,df_free_from, df_dietary):
+    
+    # Hybrid recommender outputting list of restaurants
+    given_restaurant_id1 = restaurant_name_df[restaurant_name_df['name']==restaurant_names[0]].index[0]
+    given_restaurant_id2 = restaurant_name_df[restaurant_name_df['name']==restaurant_names[1]].index[0]
+
+    content_neighbours_1 = get_restaurant_neighbours(given_restaurant_id1, restaurant_keywords_df, restaurant_categories_df, restaurant_name_df, K = 50)
+    content_neighbours_2 = get_restaurant_neighbours(given_restaurant_id2, restaurant_keywords_df, restaurant_categories_df, restaurant_name_df, K = 50)
+
+    # Based off of user's input restaurants, create mock user to compare to existing users
+    mock_user = pd.DataFrame(0.0, columns=user_item_df.columns, index = ['mock_user'])
+    mock_user[[given_restaurant_id1,given_restaurant_id2]] = 5.0
+
+    # Neighbours to mock user from user-item filtering
+    neighbours_to_mock_user = get_neighbour_user_ids(mock_user, user_item_df, K = 10)
+    user_neighbours = get_restaurant_ids_from_neighbour_users(mock_user, neighbours_to_mock_user, user_item_df = user_item_df)
+
+    #Combine all neighbours and remove duplicates and close name matches (for chain restaurants)
+    combined_neighbours = scale_neighbour_distance(content_neighbours_1) + scale_neighbour_distance(content_neighbours_2) + scale_neighbour_distance(user_neighbours,to_add = 0.05)
+    combined_neighbours = remove_dupe_neighbours(combined_neighbours,restaurant_name_df)
+
+    # Re-rank neighbours based off of user's input allergies and dietary accomodation requests
+    allergy_adjusted_neighbours = re_rank_neighbours(combined_neighbours, df_contains,df_free_from, df_dietary, allergen_key_list, dietary_key_list)
+    
+    return allergy_adjusted_neighbours
