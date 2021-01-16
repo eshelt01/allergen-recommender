@@ -11,15 +11,15 @@ A hybrid recommender providing individualized restaurant recommendations for tho
 
 ### Data pre-processing
 
-- dataset_cleaning: script for loading YELP dataset, cleaning, and saving to .pkl files (offline)
+- dataset_cleaning: script for loading YELP dataset, cleaning, and saving to .pkl files 
 
 ### NLP
 - Review.py: class for basic text cleaning, lemmatization, and sentiment analysis for reviews
 - TFIDF_process.py: script for term frequency–inverse document frequency processing on reviews
-- create_allergen_indices.py: script to create dataframes/.pkl for custom 'allergen index' for each restaurant
+- create_allergen_indices.py: script to create dataframes for custom 'allergen index' for each restaurant
 
 ### Recommender
-- hybrid_recommend.py: module for recommender functions
+- hybridRecommender.py: class for recommender functions
 - AllergenRecommender.py : main script for final recommender
 
  ## Example Case:
