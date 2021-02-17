@@ -61,9 +61,9 @@ class hybridRecommend():
         
         categories_1 = self.restaurant_categories_df.loc[restaurant_id1]
         categories_2 = self.restaurant_categories_df.loc[restaurant_id2] 
-        category_distance = spatial.distance.cosine(categories_1, categories_2)
+        category_distance = spatial.distance.jaccard(categories_1, categories_2)
         
-        return keyword_distance + category_distance
+        return keyword_distance + (category_distance/2.0)
     
     def get_restaurant_neighbours(self, orig_restaurant, K = 10):
         """ Find all K neighbours to given restaurant id """
